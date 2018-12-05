@@ -36,10 +36,6 @@ type okex struct {
 func OkexWebsocketInit() *okex {
 	okex := new(okex)
 	okex.Url = "wss://real.okex.com:10441/websocket?compress=true"
-	okex.WsConnect()
-	go func() {
-		okex.Ping()
-	}()
 	return okex
 }
 

@@ -37,7 +37,6 @@ type huobi struct {
 func HbWebsocketInit() *huobi {
 	huobi := new(huobi)
 	huobi.Url = os.Getenv("HUOBI_URL")
-	huobi.WsConnect()
 	return huobi
 }
 
