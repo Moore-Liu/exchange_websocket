@@ -97,7 +97,7 @@ func (o huobi) ReadMessage() {
 				log.Log("message error:", err)
 			}
 			data := string(message)
-			if strings.Contains(data, "pong") {
+			if strings.Contains(data, "ping") {
 				o.Pong(data)
 			}
 			fmt.Println("message is:", msgType, data)
