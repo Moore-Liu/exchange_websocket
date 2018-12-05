@@ -4,7 +4,7 @@ import "exchange_websocket/huobi_websocket"
 
 func main() {
 	hb := huobi_websocket.HbWebsocketInit()
-	hb.HbTickWebsocket()
+	hb.HbKlineWebsocket()
 	for {
 		hb.Subscribe()
 		hb.ReadMessage()

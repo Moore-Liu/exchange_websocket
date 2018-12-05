@@ -5,9 +5,9 @@ import (
 )
 
 func main() {
-	for true {
-		okex := OkexWebsocketInit()
-		okex.OkexTickWebsocket()
+	okex := OkexWebsocketInit()
+	okex.OkexTickWebsocket()
+	for {
 		okex.Subscribe()
 		okex.ReadMessage()
 	}

@@ -3,10 +3,11 @@ package main
 import "exchange_websocket/huobi_websocket"
 
 func main() {
-	for true {
-		hb := huobi_websocket.HbWebsocketInit()
-		hb.HbTradeWebsocket()
+	hb := huobi_websocket.HbWebsocketInit()
+	hb.HbDepthWebsocket()
+	for {
 		hb.Subscribe()
 		hb.ReadMessage()
 	}
+
 }
