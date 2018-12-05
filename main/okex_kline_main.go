@@ -6,6 +6,10 @@ func main() {
 	okex := OkexWebsocketInit()
 	okex.OkexKlineWebsocket()
 	for {
+		okex.WsConnect()
+		go func() {
+			okex.Ping()
+		}()
 		okex.Subscribe()
 		okex.ReadMessage()
 

@@ -6,6 +6,7 @@ func main() {
 	hb := huobi_websocket.HbWebsocketInit()
 	hb.HbDepthWebsocket()
 	for {
+		hb.WsConnect()
 		hb.Subscribe()
 		hb.ReadMessage()
 	}
