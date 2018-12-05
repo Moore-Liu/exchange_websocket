@@ -86,7 +86,8 @@ func (o huobi) ReadMessage() {
 	for true {
 		msgType, msg, err := o.Ws.ReadMessage()
 		if err != nil {
-			panic(err)
+			log.Log("read message error:", err)
+			break
 		}
 		if msgType == websocket.TextMessage {
 			data := string(msg)
@@ -106,6 +107,8 @@ func (o huobi) ReadMessage() {
 			err := o.Ws.Close()
 			if err != nil {
 				log.Log("websocket close error:", err)
+			} else {
+				log.Log("websocket close")
 			}
 			break
 		}
