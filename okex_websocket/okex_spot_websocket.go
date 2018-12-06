@@ -80,7 +80,7 @@ func (o *okex) Subscribe() {
 		fmt.Println(*channel)
 		err := o.Ws.WriteJSON(*channel)
 		if err != nil {
-			panic(err)
+			fmt.Println("subscribe error: ", err)
 		}
 	}
 
@@ -91,7 +91,8 @@ func (o *okex) ReadMessage() {
 	for true {
 		msgType, msg, err := o.Ws.ReadMessage()
 		if err != nil {
-			panic(err)
+			fmt.Println("read message error: ", err)
+			break
 		}
 		if msgType == websocket.TextMessage {
 			data := string(msg)
