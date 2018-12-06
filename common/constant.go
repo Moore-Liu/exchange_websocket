@@ -1,5 +1,10 @@
 package common
 
+import (
+	"os"
+	"strings"
+)
+
 var (
 	/************************* BTC交易对 **************************/
 	CommonUsdt = []string{"BTC_USDT", "ETH_USDT", "EOS_USDT", "XRP_USDT", "ETC_USDT", "LTC_USDT", "NEO_USDT",
@@ -43,6 +48,8 @@ var (
 
 	/************************* bitmex 永续合约 *********************/
 	BitmexYx = []string{"XBTUSD"}
+
+	BitmexDq = strings.Split(os.Getenv("BITMEX_DQ"), ",")
 )
 
 /************ kline cycle *****************/

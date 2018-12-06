@@ -150,6 +150,50 @@ func (o *bitmex) BmTradeQuoteKlineWebsocket() {
 	o.Channels = append(o.Channels, &channel)
 }
 
+func (o *bitmex) BmFuturesTradeDepthWebsocket() {
+	bmFuturesSymbols := NewBitmexFuturesSymbol()
+	var tradeArgs []string
+	var depthArgs []string
+	for _, symbol := range bmFuturesSymbols.BitmexSymbols {
+		tradeCh := "trade:" + symbol
+		depthCh := "orderBook10:" + symbol
+		tradeArgs = append(tradeArgs, tradeCh)
+		depthArgs = append(depthArgs, depthCh)
+	}
+	args := append(tradeArgs, depthArgs...)
+	channel := BmWebsocketRequest{"subscribe", args}
+	o.Channels = append(o.Channels, &channel)
+}
+
+func (o *bitmex) BmFuturesInstrumentQuetoWebsocket() {
+	bmFuturesSymbols := NewBitmexFuturesSymbol()
+	var instrumentArgs []string
+	var quetoArgs []string
+	for _, symbol := range bmFuturesSymbols.BitmexSymbols {
+		instrumentCh := "instrument:" + symbol
+		quetoCh := "queto:" + symbol
+		instrumentArgs = append(instrumentArgs, instrumentCh)
+		quetoArgs = append(quetoArgs, quetoCh)
+	}
+	args := append(instrumentArgs, quetoArgs...)
+	channel := BmWebsocketRequest{"subscribe", args}
+	o.Channels = append(o.Channels, &channel)
+}
+
+func (o *bitmex) BmFuturesKlineWebsocket() {
+	bmFuturesSymbols := NewBitmexFuturesSymbol()
+	bmCycles := NewBitmexCycle()
+	var klineArgs []string
+	for _, symbol := range bmFuturesSymbols.BitmexSymbols {
+		for _, cycle := range bmCycles.BitmexCycles[0:2] {
+			klineCh := "tradeBin" + cycle + ":" + symbol
+			klineArgs = append(klineArgs, klineCh)
+		}
+	}
+	channel := BmWebsocketRequest{"subscribe", klineArgs}
+	o.Channels = append(o.Channels, &channel)
+}
+
 type BmWebsocketRequest struct {
 	Op   string   `json:"op"`
 	Args []string `json:"args"`
