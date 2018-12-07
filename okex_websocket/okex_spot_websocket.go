@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"github.com/go-log/log"
 	"github.com/gorilla/websocket"
+	"os"
 	"time"
 )
 
 type Okex interface {
 	//ping
-	Ping() error
+	Ping()
 	// connect
-	WsConnect() error
+	WsConnect()
 	// subscribe
 	Subscribe()
 	// read message
@@ -35,7 +36,7 @@ type okex struct {
 // 初始化
 func OkexWebsocketInit() *okex {
 	okex := new(okex)
-	okex.Url = "wss://real.okex.com:10441/websocket?compress=true"
+	okex.Url = os.Getenv("OKEX_URL")
 	return okex
 }
 
@@ -46,7 +47,8 @@ func (o *okex) WsConnect() {
 
 	ws, _, err := dialer.Dial(o.Url, nil)
 	if err != nil {
-		panic(err)
+		fmt.Println("websocket connect error:", err)
+		return
 	}
 	o.Ws = ws
 
@@ -58,7 +60,7 @@ func (o *okex) Ping() {
 	for true {
 		err := o.Ws.WriteJSON(pingMsg)
 		if err != nil {
-			log.Log("error message:", err)
+			fmt.Println("ping error:", err)
 		}
 		time.Sleep(25 * time.Second)
 	}
@@ -81,6 +83,7 @@ func (o *okex) Subscribe() {
 		err := o.Ws.WriteJSON(*channel)
 		if err != nil {
 			fmt.Println("subscribe error: ", err)
+			return
 		}
 	}
 
@@ -100,7 +103,7 @@ func (o *okex) ReadMessage() {
 		} else if msgType == websocket.BinaryMessage {
 			message, err := GzipDecode(msg)
 			if err != nil {
-				log.Log("error:", err)
+				fmt.Println("error:", err)
 				continue
 			}
 			data := string(message)
@@ -109,7 +112,7 @@ func (o *okex) ReadMessage() {
 			// 重新连接
 			err := o.Ws.Close()
 			if err != nil {
-				log.Log("error:", err)
+				fmt.Println("error:", err)
 			}
 			break
 		}
