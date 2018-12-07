@@ -55,12 +55,23 @@ func (o *bitfinex) WsConnect() {
 // ping 保持连接
 func (o *bitfinex) Ping() {
 	pingMsg := ping{Event: "ping"}
-	for true {
-		err := o.Ws.WriteJSON(pingMsg)
-		if err != nil {
-			fmt.Println("ping error:", err)
+	done := make(chan struct{})
+	// 5s定时
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-done:
+			return
+		case <-ticker.C: // ping消息
+			err := o.Ws.WriteJSON(pingMsg)
+			if err != nil {
+				fmt.Println("ping error: ", err)
+				return
+			}
+
 		}
-		time.Sleep(5 * time.Second)
 	}
 }
 

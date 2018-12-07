@@ -7,6 +7,9 @@ func main() {
 	bf.BFTradeWebsocket()
 	for true {
 		bf.WsConnect()
+		go func() {
+			bf.Ping()
+		}()
 		bf.Subscribe("trade")
 		bf.ReadMessage()
 	}

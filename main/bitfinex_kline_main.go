@@ -7,6 +7,9 @@ func main() {
 	bf.BFKlineWebsocket()
 	for true {
 		bf.WsConnect()
+		go func() {
+			bf.Ping()
+		}()
 		bf.Subscribe("kline")
 		bf.ReadMessage()
 	}

@@ -7,6 +7,9 @@ func main() {
 	bf.BFDepthWebsocket()
 	for true {
 		bf.WsConnect()
+		go func() {
+			bf.Ping()
+		}()
 		bf.Subscribe("depth")
 		bf.ReadMessage()
 	}

@@ -7,6 +7,9 @@ func main() {
 	bf.BFTickWebsocket()
 	for true {
 		bf.WsConnect()
+		go func() {
+			bf.Ping()
+		}()
 		bf.Subscribe("tick")
 		bf.ReadMessage()
 	}
