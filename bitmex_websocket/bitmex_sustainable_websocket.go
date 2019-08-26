@@ -50,12 +50,25 @@ func (o *bitmex) WsConnect() {
 
 // ping
 func (o *bitmex) Ping() {
-	o.Ws.PingHandler()
-	err := o.Ws.WriteJSON("ping")
-	if err != nil {
-		fmt.Println("ping error: ", err)
+	done := make(chan struct{})
+	// 5s定时
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-done:
+			return
+		case <-ticker.C: // ping消息
+			err := o.Ws.WriteMessage(websocket.TextMessage, []byte("ping"))
+			if err != nil {
+				fmt.Println("ping error: ", err)
+				return
+			}
+
+		}
 	}
-	time.Sleep(5 * time.Second)
+
 }
 
 // 订阅subscribe
@@ -134,6 +147,50 @@ func (o *bitmex) BmTradeQuoteKlineWebsocket() {
 	}
 	args := append(append(tradeArgs, quoteArgs...), klineArgs...)
 	channel := BmWebsocketRequest{"subscribe", args}
+	o.Channels = append(o.Channels, &channel)
+}
+
+func (o *bitmex) BmFuturesTradeDepthWebsocket() {
+	bmFuturesSymbols := NewBitmexFuturesSymbol()
+	var tradeArgs []string
+	var depthArgs []string
+	for _, symbol := range bmFuturesSymbols.BitmexSymbols {
+		tradeCh := "trade:" + symbol
+		depthCh := "orderBook10:" + symbol
+		tradeArgs = append(tradeArgs, tradeCh)
+		depthArgs = append(depthArgs, depthCh)
+	}
+	args := append(tradeArgs, depthArgs...)
+	channel := BmWebsocketRequest{"subscribe", args}
+	o.Channels = append(o.Channels, &channel)
+}
+
+func (o *bitmex) BmFuturesInstrumentQuetoWebsocket() {
+	bmFuturesSymbols := NewBitmexFuturesSymbol()
+	var instrumentArgs []string
+	var quetoArgs []string
+	for _, symbol := range bmFuturesSymbols.BitmexSymbols {
+		instrumentCh := "instrument:" + symbol
+		quetoCh := "queto:" + symbol
+		instrumentArgs = append(instrumentArgs, instrumentCh)
+		quetoArgs = append(quetoArgs, quetoCh)
+	}
+	args := append(instrumentArgs, quetoArgs...)
+	channel := BmWebsocketRequest{"subscribe", args}
+	o.Channels = append(o.Channels, &channel)
+}
+
+func (o *bitmex) BmFuturesKlineWebsocket() {
+	bmFuturesSymbols := NewBitmexFuturesSymbol()
+	bmCycles := NewBitmexCycle()
+	var klineArgs []string
+	for _, symbol := range bmFuturesSymbols.BitmexSymbols {
+		for _, cycle := range bmCycles.BitmexCycles[0:2] {
+			klineCh := "tradeBin" + cycle + ":" + symbol
+			klineArgs = append(klineArgs, klineCh)
+		}
+	}
+	channel := BmWebsocketRequest{"subscribe", klineArgs}
 	o.Channels = append(o.Channels, &channel)
 }
 

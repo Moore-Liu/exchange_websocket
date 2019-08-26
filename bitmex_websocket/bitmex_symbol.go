@@ -17,3 +17,13 @@ func (o *BitmexSymbol) bitmexSymbolInit() *BitmexSymbol {
 	o.BitmexSymbols = BitmexYx
 	return o
 }
+
+func NewBitmexFuturesSymbol() *BitmexSymbol {
+	bm := new(BitmexSymbol)
+	return bm.bitmexFuturesSymbolInit()
+}
+
+func (o *BitmexSymbol) bitmexFuturesSymbolInit() *BitmexSymbol {
+	o.BitmexSymbols = BitmexDq
+	return o
+}
